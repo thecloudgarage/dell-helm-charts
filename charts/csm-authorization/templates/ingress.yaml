@@ -10,7 +10,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.authorization.proxyServerIngress.ingressClassName }}
   ingressClassName: {{ .Values.authorization.proxyServerIngress.ingressClassName }}
+  {{- end}}
   tls:
   - hosts:
       - {{ .Values.authorization.hostname }}
@@ -62,7 +64,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.authorization.tenantServiceIngress.ingressClassName }}
   ingressClassName: {{ .Values.authorization.tenantServiceIngress.ingressClassName }}
+  {{- end }}
   tls:
   - hosts:
       - tenant.{{ .Values.authorization.hostname }}
@@ -114,7 +118,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.authorization.roleServiceIngress.ingressClassName }}
   ingressClassName: {{ .Values.authorization.roleServiceIngress.ingressClassName }}
+  {{- end }}
   tls:
   - hosts:
       - role.{{ .Values.authorization.hostname }}
@@ -166,7 +172,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.authorization.storageServiceIngress.ingressClassName }}
   ingressClassName: {{ .Values.authorization.storageServiceIngress.ingressClassName }}
+  {{- end }}
   tls:
   - hosts:
       - storage.{{ .Values.authorization.hostname }}

@@ -33,6 +33,7 @@ authorization:
     # collectoruri: http://DNS-hostname:9411/api/v2/spans
     # probability: 1
 
+#oc apply -f https://raw.githubusercontent.com/nginxinc/nginx-ingress-helm-operator/v1.2.0/resources/scc.yaml
   # proxy-server ingress configuration
   proxyServerIngress:
     ingressClassName: nginx
