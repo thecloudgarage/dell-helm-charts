@@ -11,14 +11,14 @@ webhooks:
     service:
       name: {{ .Release.Name }}-webhook-service
       namespace: {{ include "custom.namespace" . }}
-      path: /validate-mobility-storage-dell-com-v1alpha1-backup
+      path: /validate-mobility-storage-dell-com-v1-backup
   failurePolicy: Fail
   name: vbackup.mobility.storage.dell.com
   rules:
   - apiGroups:
     - mobility.storage.dell.com
     apiVersions:
-    - v1alpha1
+    - v1
     operations:
     - CREATE
     - UPDATE
