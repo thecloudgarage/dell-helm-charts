@@ -22,7 +22,6 @@ dependencies:
     version: 1.12.2
     repository: https://charts.jetstack.io
     condition: cert-manager.enabled
-home: https://github.com/dell/csi-pow
 home: https://github.com/dell/csi-powermax
 icon: https://avatars1.githubusercontent.com/u/20958494?s=200&v=4
 sources:
