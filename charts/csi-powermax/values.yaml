@@ -278,7 +278,11 @@ csireverseproxy:
   # Example: "StandAlone"
   mode: StandAlone
   # Auto-create TLS certificate for csi-reverseproxy
-  certManager:
+  cert-manager:
+    # cert-manager adds certificates and certificate issuers as resource types in K8s clusters
+    # If cert-manager is already present in the cluster, set enabled to false not to install it.
+    # Default value: true
+    enabled: true
     # Set selfSignedCert to use a self-signed certificate
     # Default value: true
     selfSignedCert: true
