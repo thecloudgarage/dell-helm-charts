@@ -296,6 +296,7 @@ spec:
             - name: udev-d
               mountPath: /rules.d
         {{- end }}
+{{- if eq .Values.sdc.enabled true }}
       initContainers:
         - name: sdc
           securityContext:
@@ -406,5 +407,6 @@ spec:
           hostPath:
             path: /var/run
             type: Directory
+{{- end }}
 {{- end }}
 {{- end }}
