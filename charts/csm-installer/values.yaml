@@ -33,7 +33,7 @@ dbPort: 26257
 dbSSLEnabled: "true"
 
 # CSM Installer image
-installerImage: dellemc/dell-csm-installer:v1.0.1
+installerImage: dellemc/dell-csm-installer:latest
 
 # CSM Data collector image
 dataCollectorImage: dellemc/csm-data-collector:v1.0.1
