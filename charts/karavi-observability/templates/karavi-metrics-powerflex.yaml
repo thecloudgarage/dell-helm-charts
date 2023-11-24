@@ -50,6 +50,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-metrics-powerflex-controller
       containers:
       - name: karavi-metrics-powerflex
+        imagePullPolicy: Always
         image: {{ .Values.karaviMetricsPowerflex.image }}
         resources: {}
         env:

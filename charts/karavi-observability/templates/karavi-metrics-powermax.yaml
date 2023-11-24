@@ -50,6 +50,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-metrics-powermax-controller
       containers:
       - name: karavi-metrics-powermax
+        imagePullPolicy: Always
         image: {{ .Values.karaviMetricsPowermax.image }}
         resources: {}
         env:

@@ -44,6 +44,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-metrics-powerstore-controller
       containers:
       - name: karavi-metrics-powerstore
+        imagePullPolicy: Always
         image: {{ .Values.karaviMetricsPowerstore.image }}
         resources: {}
         env:

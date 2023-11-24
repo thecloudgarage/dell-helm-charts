@@ -50,6 +50,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-metrics-powerscale-controller
       containers:
       - name: karavi-metrics-powerscale
+        imagePullPolicy: Always
         image: {{ .Values.karaviMetricsPowerscale.image }}
         resources: {}
         env:
