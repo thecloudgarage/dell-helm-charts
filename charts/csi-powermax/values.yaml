@@ -463,3 +463,9 @@ vSphere:
   vCenterHost: "00.000.000.00"
   # vCenterCredSecret: secret name for the vCenter credentials
   vCenterCredSecret: vcenter-creds
+
+secrets:
+     name: powermax-creds
+     username: "c21j"
+     password: "c21j"
+
