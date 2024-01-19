@@ -40,6 +40,12 @@ rules:
     resources: [ "pods" ]
     verbs: [ "get", "list", "watch", "update", "patch" ]
   {{- end}}
+   #below for podmon
+  {{- if hasKey .Values "podmon" }}
+  {{- if eq .Values.podmon.enabled true }}
+  - apiGroups: [ "" ]
+    resources: [ "pods" ]
+    verbs: [ "get", "list", "watch", "update", "delete" ]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -81,6 +87,9 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}-node
+        {{- if .Values.podmon.enabled }}
+        driver.dellemc.com: dell-storage
+        {{- end }}
     spec:
       serviceAccountName: {{ .Release.Name }}-node
       {{ if .Values.node.nodeSelector }}
@@ -216,6 +225,20 @@ spec:
                   name: {{ .Values.vSphere.vCenterCredSecret }}
                   key: password
             {{- end }}
+            {{- if hasKey .Values "podmon" }}
+            - name: X_CSI_PODMON_ENABLED
+              value: "{{ .Values.podmon.enabled }}"
+                       {{- if eq .Values.podmon.enabled true }}
+                         {{- range $key, $value := .Values.podmon.node.args }}
+                           {{- if contains "--arrayConnectivityPollRate" $value }}
+            - name: X_CSI_PODMON_ARRAY_CONNECTIVITY_POLL_RATE
+              value: "{{ (split "=" $value)._1 }}"
+                           {{- end }}
+                         {{- end }}
+                       {{- end }}
+                       {{- end }}
+            - name: X_CSI_PODMON_API_PORT
+              value: "{{ .Values.podmonAPIPort }}"
           volumeMounts:
             - name: driver-path
               mountPath: {{ .Values.kubeletConfigDir }}/plugins/powermax.emc.dell.com
@@ -340,6 +363,58 @@ spec:
               mountPath: /etc/karavi-authorization
         {{ end }}
         {{ end }}
+        {{- if hasKey .Values "podmon" }}
+        {{- if eq .Values.podmon.enabled true }}
+        - name: podmon
+          securityContext:
+            privileged: true
+            capabilities:
+              add: [ "SYS_ADMIN" ]
+            allowPrivilegeEscalation: true
+          image: {{ required "Must provide the podmon container image." .Values.images.podmon }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          args:
+            {{- toYaml .Values.podmon.node.args | nindent 12 }}
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: X_CSI_PRIVATE_MOUNT_DIR
+              value: {{ .Values.kubeletConfigDir }}
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: kubelet-pods
+              mountPath: {{ .Values.kubeletConfigDir }}/pods
+              mountPropagation: "Bidirectional"
+            - name: driver-path
+              mountPath: {{ .Values.kubeletConfigDir }}/plugins/{{ .Values.driverName }}
+              mountPropagation: "Bidirectional"
+            - name: csi-path
+              mountPath: {{ .Values.kubeletConfigDir }}/plugins/kubernetes.io/csi
+              mountPropagation: "Bidirectional"
+            - name: dev
+              mountPath: /dev
+            - name: usr-bin
+              mountPath: /usr-bin
+            - name: var-run
+              mountPath: /var/run
+            - name: powermax-config-params
+              mountPath: /powermax-config-params
+        {{- end }}
+        {{- end }}
       volumes:
         - name: registration-dir
           hostPath:
@@ -395,5 +470,21 @@ spec:
         - name: proxy-server-root-certificate
           secret:
             secretName: proxy-server-root-certificate
+      {{ end }}
+      {{ end }}
+      {{- if hasKey .Values "podmon" }}
+      {{- if eq .Values.podmon.enabled true }}
+      - name: usr-bin
+        hostPath:
+          path: /usr/bin
+          type: Directory
+      - name: kubelet-pods
+        hostPath:
+          path: /var/lib/kubelet/pods
+          type: Directory
+      - name: var-run
+        hostPath:
+          path: /var/run
+          type: Directory
       {{ end }}
       {{ end }}
