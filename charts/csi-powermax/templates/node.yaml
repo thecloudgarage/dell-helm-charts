@@ -46,6 +46,8 @@ rules:
   - apiGroups: [ "" ]
     resources: [ "pods" ]
     verbs: [ "get", "list", "watch", "update", "delete" ]
+  {{- end }}
+  {{- end }}
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -228,15 +230,15 @@ spec:
             {{- if hasKey .Values "podmon" }}
             - name: X_CSI_PODMON_ENABLED
               value: "{{ .Values.podmon.enabled }}"
-                       {{- if eq .Values.podmon.enabled true }}
-                         {{- range $key, $value := .Values.podmon.node.args }}
-                           {{- if contains "--arrayConnectivityPollRate" $value }}
+            {{- if eq .Values.podmon.enabled true }}
+              {{- range $key, $value := .Values.podmon.node.args }}
+                {{- if contains "--arrayConnectivityPollRate" $value }}
             - name: X_CSI_PODMON_ARRAY_CONNECTIVITY_POLL_RATE
               value: "{{ (split "=" $value)._1 }}"
-                           {{- end }}
-                         {{- end }}
-                       {{- end }}
-                       {{- end }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+            {{- end }}
             - name: X_CSI_PODMON_API_PORT
               value: "{{ .Values.podmonAPIPort }}"
           volumeMounts:
